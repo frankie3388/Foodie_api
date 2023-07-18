@@ -1,6 +1,8 @@
 from flask import Blueprint
 from init import db, bcrypt
 from models.user import User
+from models.favourites_list import Favourites_list
+from datetime import date
 
 db_commands = Blueprint('db', __name__)
 
@@ -33,5 +35,22 @@ def seed_db():
     ]
 
     db.session.add_all(users)
+    
+    favourites_lists = [
+        Favourites_list(
+            list_name='List 1',
+            date_created=date.today(),
+            user=users[0]
+        ),
+        Favourites_list(
+            list_name='List 2',
+            date_created=date.today(),
+            user=users[1]
+        ),
+    ]
+    
+    db.session.add_all(favourites_lists)
+    
     db.session.commit()
     print("Tables seeded")
+
