@@ -4,6 +4,7 @@ from init import db, ma, bcrypt, jwt
 from controllers.cli_controller import db_commands
 from controllers.auth_controller import auth_bp
 from controllers.favourites_list_controller import favourites_list_bp
+from controllers.restaurant_controller import restaurant_bp
 
 
 def create_app():
@@ -22,5 +23,6 @@ def create_app():
     app.register_blueprint(db_commands)
     app.register_blueprint(auth_bp)
     app.register_blueprint(favourites_list_bp)
+    app.register_blueprint(restaurant_bp)
 
     return app
