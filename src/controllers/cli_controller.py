@@ -3,6 +3,7 @@ from init import db, bcrypt
 from models.user import User
 from models.favourites_list import Favourites_list
 from models.restaurant import Restaurant
+from models.favourite_restaurant import Favourite_restaurant
 from datetime import date
 
 db_commands = Blueprint('db', __name__)
@@ -88,6 +89,27 @@ def seed_db():
     ]
     
     db.session.add_all(restaurants)
+
+    favourite_restaurants = [
+        Favourite_restaurant(
+            favourites_list=favourites_lists[0],
+            restaurant=restaurants[0]
+        ),
+        Favourite_restaurant(
+            favourites_list=favourites_lists[1],
+            restaurant=restaurants[1]
+        ),
+        Favourite_restaurant(
+            favourites_list=favourites_lists[1],
+            restaurant=restaurants[2]
+        ),
+        Favourite_restaurant(
+            favourites_list=favourites_lists[1],
+            restaurant=restaurants[3]
+        ),
+    ]
+
+    db.session.add_all(favourite_restaurants)
     db.session.commit()
     print("Tables seeded")
 

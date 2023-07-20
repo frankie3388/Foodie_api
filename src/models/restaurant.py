@@ -13,6 +13,8 @@ class Restaurant(db.Model):
     country = db.Column(db.String)
     date = db.Column(db.Date)
 
+    favourite_restaurant = db.relationship('Favourite_restaurant', back_populates='restaurant', cascade='all, delete')
+
 class RestaurantSchema(ma.Schema):
     class Meta:
         fields = ('id', 'restaurant_name', 'address', 'cuisine', 'buffet', 'country', 'date')
