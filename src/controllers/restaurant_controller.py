@@ -5,6 +5,7 @@ from models.restaurant import Restaurant, restaurant_schema, restaurants_schema
 
 restaurant_bp = Blueprint('restaurant', __name__, url_prefix='/restaurant')
 
+
 # This route gets all restaurants
 @restaurant_bp.route('/')
 def get_all_restaurants():

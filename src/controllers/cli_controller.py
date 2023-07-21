@@ -38,20 +38,6 @@ def seed_db():
 
     db.session.add_all(users)
     
-    favourites_lists = [
-        Favourites_list(
-            list_name='List 1',
-            date_created=date.today(),
-            user=users[0]
-        ),
-        Favourites_list(
-            list_name='List 2',
-            date_created=date.today(),
-            user=users[1]
-        ),
-    ]
-    
-    db.session.add_all(favourites_lists)
 
     restaurants = [
         Restaurant(
@@ -90,6 +76,26 @@ def seed_db():
     
     db.session.add_all(restaurants)
 
+    favourites_lists = [
+        Favourites_list(
+            list_name='List 1',
+            date_created=date.today(),
+            user=users[0]
+        ),
+        Favourites_list(
+            list_name='List 2',
+            date_created=date.today(),
+            user=users[1]
+        ),
+        Favourites_list(
+            list_name='List 3',
+            date_created=date.today(),
+            user=users[1],
+        ),
+    ]
+    
+    db.session.add_all(favourites_lists)
+    
     favourite_restaurants = [
         Favourite_restaurant(
             favourites_list=favourites_lists[0],
@@ -104,7 +110,7 @@ def seed_db():
             restaurant=restaurants[2]
         ),
         Favourite_restaurant(
-            favourites_list=favourites_lists[1],
+            favourites_list=favourites_lists[2],
             restaurant=restaurants[3]
         ),
     ]

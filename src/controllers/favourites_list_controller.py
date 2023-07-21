@@ -1,10 +1,12 @@
 from flask import Blueprint, request
 from init import db
 from models.favourites_list import Favourites_list, favourites_list_schema, favourites_lists_schema
+from controllers.favourite_restaurant_controller import favourite_restaurant_bp
 from datetime import date
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 favourites_list_bp = Blueprint('favourites_list', __name__, url_prefix='/favourites_list')
+favourites_list_bp.register_blueprint(favourite_restaurant_bp, url_prefix='/<int:favourites_list_id>/favourite_restaurants')
 
 # This route gets all favourites lists
 @favourites_list_bp.route('/')
