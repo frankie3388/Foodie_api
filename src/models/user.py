@@ -12,6 +12,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     favourites_list = db.relationship('Favourites_list', back_populates='user', cascade='all, delete')
+    comments_ratings = db.relationship('Comments_ratings', back_populates='user')
 
 class UserSchema(ma.Schema):
     favourites_lists = fields.List(fields.Nested('Favourites_listSchema', exclude=['user']))

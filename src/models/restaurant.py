@@ -14,6 +14,7 @@ class Restaurant(db.Model):
     date = db.Column(db.Date)
 
     favourite_restaurant = db.relationship('Favourite_restaurant', back_populates='restaurant', cascade='all, delete')
+    comments_ratings = db.relationship('Comments_ratings', back_populates='restaurant', cascade='all, delete')
 
 class RestaurantSchema(ma.Schema):
     class Meta:
