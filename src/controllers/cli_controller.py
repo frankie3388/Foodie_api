@@ -4,6 +4,7 @@ from models.user import User
 from models.favourites_list import Favourites_list
 from models.restaurant import Restaurant
 from models.favourite_restaurant import Favourite_restaurant
+from models.comments_ratings import Comments_ratings
 from datetime import date
 
 db_commands = Blueprint('db', __name__)
@@ -114,8 +115,31 @@ def seed_db():
             restaurant=restaurants[3]
         ),
     ]
-
+    
     db.session.add_all(favourite_restaurants)
+
+    comments_ratings = [
+        Comments_ratings(
+            message='Great Japanese food',
+            food_rating=5,
+            experience_rating=5,
+            value_rating=4,
+            date_created=date.today(),
+            user=users[1],
+            restaurant=restaurants[1]
+        ),
+        Comments_ratings(
+            message='Best Japanese restaurant in Brisbane',
+            food_rating=5,
+            experience_rating=5,
+            value_rating=4,
+            date_created=date.today(),
+            user=users[1],
+            restaurant=restaurants[0]
+        ),
+    ]
+
+    db.session.add_all(comments_ratings)
     db.session.commit()
     print("Tables seeded")
 

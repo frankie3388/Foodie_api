@@ -1,6 +1,9 @@
 from init import db, ma 
 from marshmallow import fields
+from marshmallow.validate import OneOf
 
+# Ratings score - 0=worst, 5=best
+VALID_RATINGS = (0, 1, 2, 3, 4, 5)
 
 class Comments_ratings(db.Model):
     __tablename__ = 'comments_ratings'
@@ -13,7 +16,7 @@ class Comments_ratings(db.Model):
     value_rating = db.Column(db.Integer)
     date_created = db.Column(db.Date)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.id'), nullable=False)
 
     user = db.relationship('User', back_populates='comments_ratings')
@@ -22,15 +25,19 @@ class Comments_ratings(db.Model):
 
 class Comments_ratingSchema(ma.Schema):
     user = fields.Nested('UserSchema', only=['name', 'email'])
-    restaurant = fields.List(fields.Nested('RestaurantSchema'))
+    restaurant = fields.Nested('RestaurantSchema', exclude=['comments_ratings'])
+
+    food_rating = fields.Integer(validate=OneOf(VALID_RATINGS))
+    experience_rating = fields.Integer(validate=OneOf(VALID_RATINGS))
+    value_rating = fields.Integer(validate=OneOf(VALID_RATINGS))
 
     class Meta:
         fields = (
             'id', 'message', 'food_rating', 
-            'experience_rating', 'value_rating', 'date_create', 
+            'experience_rating', 'value_rating', 'date_created', 
             'user', 'restaurant'
             )
         ordered = True
 
-comments_rating_schema = Comments_ratingSchema
+comments_rating_schema = Comments_ratingSchema()
 comments_ratings_schema = Comments_ratingSchema(many=True)

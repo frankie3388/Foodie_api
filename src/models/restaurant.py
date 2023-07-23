@@ -17,8 +17,10 @@ class Restaurant(db.Model):
     comments_ratings = db.relationship('Comments_ratings', back_populates='restaurant', cascade='all, delete')
 
 class RestaurantSchema(ma.Schema):
+    comments_ratings = fields.List(fields.Nested('Comments_ratingSchema', exclude=['restaurant']))
+
     class Meta:
-        fields = ('id', 'restaurant_name', 'address', 'cuisine', 'buffet', 'country', 'date')
+        fields = ('id', 'restaurant_name', 'address', 'cuisine', 'buffet', 'country', 'date', 'comments_ratings')
         ordered = True
 
 

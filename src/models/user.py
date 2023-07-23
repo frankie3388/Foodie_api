@@ -14,11 +14,14 @@ class User(db.Model):
     favourites_list = db.relationship('Favourites_list', back_populates='user', cascade='all, delete')
     comments_ratings = db.relationship('Comments_ratings', back_populates='user')
 
+
+
 class UserSchema(ma.Schema):
     favourites_lists = fields.List(fields.Nested('Favourites_listSchema', exclude=['user']))
+    comments_ratings = fields.List(fields.Nested('Comments_ratingSchema', exclude=['user']))
 
     class Meta:
-        fields = ('id', 'name', 'email', 'password', 'is_admin', 'favourites_lists')
+        fields = ('id', 'name', 'email', 'password', 'is_admin', 'favourites_lists', 'comments_ratings')
 
 user_schema = UserSchema(exclude=['password'])
 users_schema = UserSchema(many=True, exclude=['password'])
