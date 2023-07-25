@@ -2,11 +2,34 @@ from flask import Blueprint, request
 from init import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.restaurant import Restaurant
+from models.user import User
 from models.comments_ratings import Comments_ratings, comments_rating_schema
 from datetime import date
-
+import functools
 
 comments_ratings_bp = Blueprint('comments_ratings', __name__)
+
+
+# This function can be used as a decorator for admin authourisation
+# and user authorisation
+def authorise_as_admin(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        user_id = get_jwt_identity()
+        stmt = db.select(User).filter_by(id=user_id)
+        user = db.session.scalar(stmt)
+        comments_ratings_id = kwargs.get("comments_ratings_id")
+        comments_stmt = db.select(Comments_ratings).filter_by(id=comments_ratings_id)
+        comments_ratings = db.session.scalar(comments_stmt)
+        if user.is_admin:
+            return fn(*args, **kwargs)
+        elif str(comments_ratings.user_id) == get_jwt_identity():
+            # This elif only lets users who have created the favourites list
+            # delete or update their own favourites list.
+            return fn(*args, **kwargs)
+        else:
+            return {'error': 'Not authorised to perform delete'}, 403
+    return wrapper
 
 
 @comments_ratings_bp.route('/', methods=['POST'])
@@ -35,6 +58,7 @@ def create_comment_rating(restaurant_id):
 
 @comments_ratings_bp.route('/<int:comments_ratings_id>', methods=['DELETE'])
 @jwt_required()
+@authorise_as_admin
 def delete_comment_rating(restaurant_id, comments_ratings_id):
     stmt = db.select(Comments_ratings).filter_by(id=comments_ratings_id)
     comments_ratings = db.session.scalar(stmt)
@@ -48,6 +72,7 @@ def delete_comment_rating(restaurant_id, comments_ratings_id):
 
 @comments_ratings_bp.route('/<int:comments_ratings_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
+@authorise_as_admin
 def update_comment_rating(restaurant_id, comments_ratings_id):
     body_data = request.get_json()
     stmt = db.select(Comments_ratings).filter_by(id=comments_ratings_id)

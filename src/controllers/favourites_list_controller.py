@@ -29,7 +29,7 @@ def authorise_as_admin(fn):
             # delete or update their own favourites list.
             return fn(*args, **kwargs)
         else:
-            return {'error': 'Not authorised to perform delete'}, 403
+            return {'error': 'Not authorised to perform delete or update'}, 403
     return wrapper
 
 
