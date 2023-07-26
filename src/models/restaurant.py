@@ -1,5 +1,6 @@
 from init import db, ma
 from marshmallow import fields
+from marshmallow.validate import OneOf
 
 
 class Restaurant(db.Model):
@@ -22,7 +23,6 @@ class RestaurantSchema(ma.Schema):
     class Meta:
         fields = ('id', 'restaurant_name', 'address', 'cuisine', 'buffet', 'country', 'date', 'comments_ratings')
         ordered = True
-
 
 restaurant_schema = RestaurantSchema()
 restaurants_schema = RestaurantSchema(many=True) 

@@ -5,6 +5,7 @@ from controllers.cli_controller import db_commands
 from controllers.auth_controller import auth_bp
 from controllers.favourites_list_controller import favourites_list_bp
 from controllers.restaurant_controller import restaurant_bp
+from controllers.comment_rating_controller import comments_ratings_bp_2
 from marshmallow.exceptions import ValidationError
 
 
@@ -29,5 +30,6 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(favourites_list_bp)
     app.register_blueprint(restaurant_bp)
+    app.register_blueprint(comments_ratings_bp_2)
 
     return app

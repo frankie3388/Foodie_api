@@ -1,9 +1,8 @@
 from init import db, ma 
 from marshmallow import fields
 from marshmallow.validate import OneOf
+from validation_data.valid_data import VALID_RATINGS
 
-# Ratings score - 0=worst, 5=best
-VALID_RATINGS = (0, 1, 2, 3, 4, 5)
 
 class Comments_ratings(db.Model):
     __tablename__ = 'comments_ratings'

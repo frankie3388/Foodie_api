@@ -44,24 +44,24 @@ def seed_db():
         Restaurant(
             restaurant_name='Sono Japanese Restaurant',
             address='39 Hercules St, Hamilton QLD 4007',
-            cuisine='Japanese Food',
-            buffet='No',
+            cuisine='Japanese',
+            buffet='no',
             country='Australia',
             date=date.today()
         ),
         Restaurant(
             restaurant_name='Rokkasen',
             address='Sun flower building F6・F7, 1-3-1, Nishishinjuku, Shinjiku-ku, Tokyo',
-            cuisine='Japanese Food',
-            buffet='Yes',
+            cuisine='Japanese',
+            buffet='yes',
             country='Japan',
             date=date.today()
         ),
         Restaurant(
             restaurant_name='Yung Kee',
             address='32-40 Wellington Street, Central, Hong Kong',
-            cuisine='Cantonese Food (BBQ meats)',
-            buffet='No',
+            cuisine='Chinese',
+            buffet='no',
             country='China',
             date=date.today()
         ),
@@ -69,7 +69,7 @@ def seed_db():
             restaurant_name='Ichiran',
             address='B1F, 1-22-7 Jinnan Shibuya-ku Tokyo-to',
             cuisine='Japanese',
-            buffet='No',
+            buffet='no',
             country='Japan',
             date=date.today()
         ),

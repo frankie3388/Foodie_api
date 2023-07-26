@@ -4,6 +4,7 @@ from models.restaurant import Restaurant, restaurant_schema, restaurants_schema
 from models.user import User
 from controllers.comment_rating_controller import comments_ratings_bp
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from validation_data.valid_data import VALID_BUFFET, VALID_COUNTRIES, VALID_CUISINES
 import functools
 from datetime import date
 
@@ -16,8 +17,6 @@ def authorise_as_admin(fn):
         user_id = get_jwt_identity()
         stmt = db.select(User).filter_by(id=user_id)
         user = db.session.scalar(stmt)
-
-
         if user.is_admin:
             return fn(*args, **kwargs)
         else:
@@ -41,13 +40,58 @@ def get_one_restaurant(id):
         return restaurant_schema.dump(restaurant)
     else:
         return {'error': f'Restaurant not found with id {id}'}, 404
+
+# This route gets the restaurants by restaurant name
+@restaurant_bp.route('/restaurant_name/<string:restaurant_name>')
+def get_restaurant_by_name(restaurant_name):
+    stmt = db.select(Restaurant).filter_by(restaurant_name=restaurant_name)
+    result = db.session.execute(stmt)
+    restaurants = result.scalars().all()
+    if not restaurants:
+        return {'error': f'Restaurant not found with name {restaurant_name}'}, 404
+    return restaurants_schema.dump(restaurants)
+
+# This route gets the restaurants by country
+@restaurant_bp.route('/country/<string:country>')
+def get_restaurant_by_country(country):
+    if country not in VALID_COUNTRIES:
+        return {'error': f'Country must be one of: {VALID_COUNTRIES}'}, 400
+    stmt = db.select(Restaurant).filter_by(country=country)
+    result = db.session.execute(stmt)
+    restaurants = result.scalars().all()
+    if not restaurants:
+        return {'error': f'Restaurant not found in {country}'}, 404
+    return restaurants_schema.dump(restaurants)
+
+# This route gets the restaurants by buffet
+@restaurant_bp.route('/buffet/<string:buffet>')
+def get_restaurant_by_buffet(buffet):
+    if buffet not in VALID_BUFFET:
+        return {'error': f'Buffet must be one of: {VALID_BUFFET}'}, 400
+    stmt = db.select(Restaurant).filter_by(buffet=buffet)
+    result = db.session.execute(stmt)
+    restaurants = result.scalars().all()
+    if not restaurants:
+        return {'error': f'There are no Restaurants with buffet {buffet}'}, 404
+    return restaurants_schema.dump(restaurants)
     
+# This route gets the restaurants by cuisine
+@restaurant_bp.route('/cuisine/<string:cuisine>')
+def get_restaurant_by_cuisine(cuisine):
+    if cuisine not in VALID_CUISINES:
+        return {'error': f'Cuisine must be one of: {VALID_CUISINES}'}, 400
+    stmt = db.select(Restaurant).filter_by(cuisine=cuisine)
+    result = db.session.execute(stmt)
+    restaurants = result.scalars().all()
+    if not restaurants:
+        return {'error': f'There are no Restaurants with cuisine {cuisine}'}, 404
+    return restaurants_schema.dump(restaurants)
 
 @restaurant_bp.route('/', methods=['POST'])
 @jwt_required()
 @authorise_as_admin
 def create_restaurant():
-    body_data = request.get_json()
+    body_data = restaurant_schema.load(request.get_json())
     restaurant = Restaurant(
         restaurant_name=body_data.get('restaurant_name'),
         address=body_data.get('address'),

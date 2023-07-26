@@ -3,11 +3,12 @@ from init import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.restaurant import Restaurant
 from models.user import User
-from models.comments_ratings import Comments_ratings, comments_rating_schema
+from models.comments_ratings import Comments_ratings, comments_rating_schema, comments_ratings_schema
 from datetime import date
 import functools
 
 comments_ratings_bp = Blueprint('comments_ratings', __name__)
+comments_ratings_bp_2 = Blueprint('comments_ratings', __name__, url_prefix='/comments_ratings')
 
 
 # This function can be used as a decorator for admin authourisation
@@ -31,6 +32,36 @@ def authorise_as_admin(fn):
             return {'error': 'Not authorised to perform delete'}, 403
     return wrapper
 
+# This route gets comments by food rating 
+@comments_ratings_bp_2.route('/food_rating/<int:food_rating>')
+def get_comments_ratings_by_food_rating(food_rating):
+    stmt = db.select(Comments_ratings).filter_by(food_rating=food_rating)
+    result = db.session.execute(stmt)
+    comments_ratings = result.scalars().all()
+    if not comments_ratings:
+        return {'error': f'Restaurant not found with food rating {food_rating}'}, 404
+    return comments_ratings_schema.dump(comments_ratings)
+
+# This route gets comments by experience rating 
+@comments_ratings_bp_2.route('/experience_rating/<int:experience_rating>')
+def get_comments_ratings_by_experience_rating(experience_rating):
+    stmt = db.select(Comments_ratings).filter_by(experience_rating=experience_rating)
+    result = db.session.execute(stmt)
+    comments_ratings = result.scalars().all()
+    if not comments_ratings:
+        return {'error': f'Restaurant not found with experience rating {experience_rating}'}, 404
+    return comments_ratings_schema.dump(comments_ratings)
+
+# This route gets comments by value rating 
+@comments_ratings_bp_2.route('/value_rating/<int:value_rating>')
+def get_comments_ratings_by_value_rating(value_rating):
+    stmt = db.select(Comments_ratings).filter_by(value_rating=value_rating)
+    result = db.session.execute(stmt)
+    comments_ratings = result.scalars().all()
+    if not comments_ratings:
+        return {'error': f'Restaurant not found with value rating {value_rating}'}, 404
+    return comments_ratings_schema.dump(comments_ratings)
+
 
 @comments_ratings_bp.route('/', methods=['POST'])
 @jwt_required()
@@ -48,7 +79,6 @@ def create_comment_rating(restaurant_id):
             user_id=get_jwt_identity(),
             restaurant_id=restaurant.id
         )
-
         db.session.add(comments_ratings)
         db.session.commit()
         return comments_rating_schema.dump(comments_ratings), 201
