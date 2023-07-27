@@ -15,7 +15,6 @@ class User(db.Model):
     comments_ratings = db.relationship('Comments_ratings', back_populates='user')
 
 
-
 class UserSchema(ma.Schema):
     favourites_lists = fields.List(fields.Nested('Favourites_listSchema', exclude=['user']))
     comments_ratings = fields.List(fields.Nested('Comments_ratingSchema', exclude=['user']))
@@ -24,5 +23,5 @@ class UserSchema(ma.Schema):
         fields = ('id', 'name', 'email', 'password', 'is_admin', 'favourites_lists', 'comments_ratings')
         ordered = True
         
-user_schema = UserSchema(exclude=['password'])
+user_schema = UserSchema(exclude=['password', 'comments_ratings'])
 users_schema = UserSchema(many=True, exclude=['password'])

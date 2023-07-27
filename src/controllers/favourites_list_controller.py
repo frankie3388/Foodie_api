@@ -49,6 +49,16 @@ def get_one_favourites_list(id):
         return favourites_list_schema.dump(favourites_list)
     else:
         return {'error': f'Favourites List not found with id {id}'}, 404
+    
+# This route gets favourites list by user id
+@favourites_list_bp.route('/user_id/<int:user_id>')
+def get_favourites_lists_by_user_id(user_id):
+    stmt = db.select(Favourites_list).filter_by(user_id=user_id)
+    favourites_list = db.session.scalars(stmt)
+    if favourites_list:
+        return favourites_lists_schema.dump(favourites_list)
+    else:
+        return {'error': f'Favourites List not found with user_id {user_id}'}, 404
 
 # This route lets the client create a favourites list
 @favourites_list_bp.route('/', methods=['POST'])

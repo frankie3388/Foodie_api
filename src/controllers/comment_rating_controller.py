@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.restaurant import Restaurant
 from models.user import User
 from models.comments_ratings import Comments_ratings, comments_rating_schema, comments_ratings_schema
+from validation_data.valid_data import VALID_RATINGS
 from datetime import date
 import functools
 
@@ -35,6 +36,8 @@ def authorise_as_admin(fn):
 # This route gets comments by food rating 
 @comments_ratings_bp_2.route('/food_rating/<int:food_rating>')
 def get_comments_ratings_by_food_rating(food_rating):
+    if food_rating not in VALID_RATINGS:
+        return {'error': f'Food rating must be one of: {VALID_RATINGS}'}, 400
     stmt = db.select(Comments_ratings).filter_by(food_rating=food_rating)
     result = db.session.execute(stmt)
     comments_ratings = result.scalars().all()
@@ -45,6 +48,8 @@ def get_comments_ratings_by_food_rating(food_rating):
 # This route gets comments by experience rating 
 @comments_ratings_bp_2.route('/experience_rating/<int:experience_rating>')
 def get_comments_ratings_by_experience_rating(experience_rating):
+    if experience_rating not in VALID_RATINGS:
+        return {'error': f'Experience rating must be one of: {VALID_RATINGS}'}, 400
     stmt = db.select(Comments_ratings).filter_by(experience_rating=experience_rating)
     result = db.session.execute(stmt)
     comments_ratings = result.scalars().all()
@@ -55,6 +60,8 @@ def get_comments_ratings_by_experience_rating(experience_rating):
 # This route gets comments by value rating 
 @comments_ratings_bp_2.route('/value_rating/<int:value_rating>')
 def get_comments_ratings_by_value_rating(value_rating):
+    if value_rating not in VALID_RATINGS:
+        return {'error': f'Value rating must be one of: {VALID_RATINGS}'}, 400
     stmt = db.select(Comments_ratings).filter_by(value_rating=value_rating)
     result = db.session.execute(stmt)
     comments_ratings = result.scalars().all()
