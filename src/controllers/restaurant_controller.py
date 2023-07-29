@@ -123,7 +123,7 @@ def delete_restaurant(id):
 @jwt_required()
 @authorise_as_admin
 def update_restaurant(id):
-    body_data = request.get_json()
+    body_data = restaurant_schema.load(request.get_json())
     stmt = db.select(Restaurant).filter_by(id=id)
     restaurant = db.session.scalar(stmt)
     if restaurant:

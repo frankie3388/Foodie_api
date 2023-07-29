@@ -20,6 +20,7 @@ def auth_register():
         user = User()
         user.name = body_data.get('name')
         user.email = body_data.get('email')
+        # hashing the password in the database
         user.password = bcrypt.generate_password_hash(body_data.get('password')).decode('utf-8')
         # Add the user to the session
         db.session.add(user)
@@ -40,7 +41,7 @@ def auth_login():
     # Find the user by email address
     stmt = db.select(User).filter_by(email=body_data.get('email'))
     user = db.session.scalar(stmt)
-    # If user exists and password is correct
+    # If user exists and password is correct (verification step)
     if user and bcrypt.check_password_hash(user.password, body_data.get('password')):
         token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=1))
         return { 'email': user.email, 'token': token, 'is_admin': user.is_admin }

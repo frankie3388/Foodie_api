@@ -23,5 +23,5 @@ class Favourites_listSchema(ma.Schema):
         fields = ('id', 'list_name', 'date_created', 'user', 'favourite_restaurant')
         ordered = True
 
-favourites_list_schema = Favourites_listSchema()
-favourites_lists_schema = Favourites_listSchema(many=True)
+favourites_list_schema = Favourites_listSchema(exclude=['favourite_restaurant.restaurant.comments_ratings'])
+favourites_lists_schema = Favourites_listSchema(many=True, exclude=['favourite_restaurant.restaurant.comments_ratings'])
