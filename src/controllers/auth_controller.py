@@ -15,7 +15,6 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 def auth_register():
     try:
         body_data = request.get_json()
-
         # Create a new User model instance from the user info
         user = User()
         user.name = body_data.get('name')

@@ -31,11 +31,7 @@ class Comments_ratingSchema(ma.Schema):
     value_rating = fields.Integer(validate=OneOf(VALID_RATINGS))
 
     class Meta:
-        fields = (
-            'id', 'message', 'food_rating', 
-            'experience_rating', 'value_rating', 'date_created', 
-            'user', 'restaurant'
-            )
+        fields = ('id', 'message', 'food_rating', 'experience_rating', 'value_rating', 'date_created', 'user', 'restaurant')
         ordered = True
 
 comments_rating_schema = Comments_ratingSchema()

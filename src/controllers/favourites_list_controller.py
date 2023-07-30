@@ -11,9 +11,9 @@ favourites_list_bp = Blueprint('favourites_list', __name__, url_prefix='/favouri
 favourites_list_bp.register_blueprint(favourite_restaurant_bp, url_prefix='/<int:favourites_list_id>/favourite_restaurants')
 
 
-# This function can be used as a decorator for admin authourisation
-# and user authorisation
 def authorise_as_admin(fn):
+    # This function can be used as a decorator for admin authourisation
+    # and user authorisation
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         user_id = get_jwt_identity()
@@ -33,14 +33,19 @@ def authorise_as_admin(fn):
     return wrapper
 
 
-# This route gets all favourites lists
+# This route gets all favourites lists.
+# It displays all the favourite restaurants in the favorites lists.
+# The Favourite_restaurantSchema is nested in the Favourites_listSchema as 
+# a field list, so that multiple favourite restaurant records can be displayed
+# in each favourites list record.
 @favourites_list_bp.route('/')
 def get_all_favourites_lists():
     stmt = db.select(Favourites_list).order_by(Favourites_list.date_created.desc())
     favourites_lists = db.session.scalars(stmt)
     return favourites_lists_schema.dump(favourites_lists)
 
-# This route gets individual favourites list by entering id
+# This route gets individual favourites list by entering id.
+# The returned response is the same as the above route.
 @favourites_list_bp.route('/<int:id>')
 def get_one_favourites_list(id):
     stmt = db.select(Favourites_list).filter_by(id=id)
@@ -50,7 +55,8 @@ def get_one_favourites_list(id):
     else:
         return {'error': f'Favourites List not found with id {id}'}, 404
     
-# This route gets favourites list by user id
+# This route gets favourites list by user id.
+# The returned response is the same as the above route.
 @favourites_list_bp.route('/user_id/<int:user_id>')
 def get_favourites_lists_by_user_id(user_id):
     stmt = db.select(Favourites_list).filter_by(user_id=user_id)
@@ -60,7 +66,10 @@ def get_favourites_lists_by_user_id(user_id):
     else:
         return {'error': f'Favourites List not found with user_id {user_id}'}, 404
 
-# This route lets the client create a favourites list
+# This route lets the client create a favourites list.
+# The returned response is JSON object that contains the favourites list created
+# as well as the user who created the favourites list as a field, 
+# and the favourite restaurants as a field list.
 @favourites_list_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_favourites_list():
@@ -76,7 +85,9 @@ def create_favourites_list():
     db.session.commit()
     return favourites_list_schema.dump(favourites_list), 201
 
-# This route lets the client delete a favourites list
+# This route lets the client/user delete a favourites list.
+# They must be a the user who created the favourites list or admin.
+# The id of the favourites list is used to find and delete a specific favorites list.
 @favourites_list_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin
@@ -90,7 +101,9 @@ def delete_favourites_list(id):
     else:
         return {'error': f'Favourites list not found with id {id}'}, 404
     
-# This route lets the client update the favourites list
+# This route lets the client update the favourites list.
+# They must be a the user who created the favourites list or admin.
+# The id of the favourites list is used to find and update a specific favorites list.
 @favourites_list_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 @authorise_as_admin

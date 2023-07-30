@@ -9,18 +9,19 @@ from datetime import date
 
 db_commands = Blueprint('db', __name__)
 
+# This route creates all defined Models in the database.
 @db_commands.cli.command('create')
 def create_all():
     db.create_all()
     print("Tables created")
 
-
+# This route deletes all tables in the database
 @db_commands.cli.command('drop')
 def drop_db():
     db.drop_all()
     print("Tables dropped")
 
-
+# This route creates some records in all the tables in the database
 @db_commands.cli.command('seed')
 def seed_db():
     users = [

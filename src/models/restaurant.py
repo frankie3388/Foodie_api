@@ -18,6 +18,7 @@ class Restaurant(db.Model):
     comments_ratings = db.relationship('Comments_ratings', back_populates='restaurant', cascade='all, delete')
 
 class RestaurantSchema(ma.Schema):
+    # fields.Nested Comments_ratingSchema excludes the restaurant field to avoid displaying duplicate restaurant field
     comments_ratings = fields.List(fields.Nested('Comments_ratingSchema', exclude=['restaurant']))
 
     buffet = fields.String(validate=OneOf(VALID_BUFFET))

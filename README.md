@@ -1,3 +1,6 @@
+# Link to [Trello board](https://trello.com/b/rJpJ4X81/foodie-api)  
+# Link to [Github](https://github.com/frankie3388/Foodie_api)
+
 # R1/R2 Identification of the problem you are trying to solve by building this particular app. Why is it a problem that needs solving?  
 The purpose of this application is to provide a platform for users to find information about a restaurant such as food reviews from other users, cuisine, address, etc.. Users will be able to find restaurants based on the ratings given to them from other users. It lets the user create a favourites list which they can add any restaurant they like to their list. It is an application that is made for foodies.  
 As this application lets users create favourites lists with which they can add any restaurants they like to the list, it acts as a travel guide for foodies. For example, users can create a favourites list of restaurants for each country they want to visit. They can also review the restaurant that they have visited to help other like minded foodies. Users will be able to view the favourites lists of other users which can help them decide if they should visit the restaurant.  

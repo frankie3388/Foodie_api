@@ -33,7 +33,9 @@ def authorise_as_admin(fn):
             return {'error': 'Not authorised to perform delete'}, 403
     return wrapper
 
-# This route gets comments by food rating 
+# This route gets all comments by food rating (example - food rating of 5 gets all comments_ratings records with food rating of 5).
+# The returned response is a JSON object that has fields of ('id', 'message', 'food_rating', 'experience_rating', 'value_rating', 'date_created', 'user', 'restaurant').
+# The Comments_ratingSchema is setup to display what user created what comment on what restaurant.
 @comments_ratings_bp_2.route('/food_rating/<int:food_rating>')
 def get_comments_ratings_by_food_rating(food_rating):
     if food_rating not in VALID_RATINGS:
@@ -45,7 +47,9 @@ def get_comments_ratings_by_food_rating(food_rating):
         return {'error': f'Restaurant not found with food rating {food_rating}'}, 404
     return comments_ratings_schema.dump(comments_ratings)
 
-# This route gets comments by experience rating 
+# This route gets all comments by experience rating (example - experience rating of 5 gets all comments_ratings records with experience rating of 5).
+# The returned response is a JSON object that has fields of ('id', 'message', 'food_rating', 'experience_rating', 'value_rating', 'date_created', 'user', 'restaurant').
+# The Comments_ratingSchema is setup to display what user created what comment on what restaurant.
 @comments_ratings_bp_2.route('/experience_rating/<int:experience_rating>')
 def get_comments_ratings_by_experience_rating(experience_rating):
     if experience_rating not in VALID_RATINGS:
@@ -57,7 +61,9 @@ def get_comments_ratings_by_experience_rating(experience_rating):
         return {'error': f'Restaurant not found with experience rating {experience_rating}'}, 404
     return comments_ratings_schema.dump(comments_ratings)
 
-# This route gets comments by value rating 
+# This route gets all comments by value rating (example - value rating of 5 gets all comments_ratings records with value rating of 5).
+# The returned response is a JSON object that has fields of ('id', 'message', 'food_rating', 'experience_rating', 'value_rating', 'date_created', 'user', 'restaurant').
+# The Comments_ratingSchema is setup to display what user created what comment on what restaurant.
 @comments_ratings_bp_2.route('/value_rating/<int:value_rating>')
 def get_comments_ratings_by_value_rating(value_rating):
     if value_rating not in VALID_RATINGS:
@@ -69,7 +75,9 @@ def get_comments_ratings_by_value_rating(value_rating):
         return {'error': f'Restaurant not found with value rating {value_rating}'}, 404
     return comments_ratings_schema.dump(comments_ratings)
 
-
+# This route creates a comments_ratings record in the database.
+# Only a logged in user can create a comment.
+# The restaurant id is used to find the restaurant to comment on.
 @comments_ratings_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_comment_rating(restaurant_id):
@@ -92,7 +100,8 @@ def create_comment_rating(restaurant_id):
     else:
         return {'error': f'Restaurant not found with id {restaurant_id}'}, 404
     
-
+# This route deletes a comment_ratings record by comments_ratings_id.
+# Only the user who created the comment_ratings record and admin can delete the record.
 @comments_ratings_bp.route('/<int:comments_ratings_id>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin
@@ -106,7 +115,8 @@ def delete_comment_rating(restaurant_id, comments_ratings_id):
     else:
         return {'error': f'Comment not found with id {comments_ratings.id}'}, 404
     
-
+# This route updates a comments_ratings record by comments_ratings_id.
+# Only the user who created the comment_ratings record and admin can update the record.
 @comments_ratings_bp.route('/<int:comments_ratings_id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 @authorise_as_admin

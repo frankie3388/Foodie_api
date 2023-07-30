@@ -12,6 +12,7 @@ restaurant_bp = Blueprint('restaurant', __name__, url_prefix='/restaurant')
 restaurant_bp.register_blueprint(comments_ratings_bp, url_prefix='/<int:restaurant_id>/comments_ratings')
 
 def authorise_as_admin(fn):
+    # This function is used for admin authoisation purposes only.
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         user_id = get_jwt_identity()
@@ -24,14 +25,18 @@ def authorise_as_admin(fn):
     return wrapper
 
 
-# This route gets all restaurants
+# This route gets all restaurants.
+# The restaurants_schema has a list of Comments_ratingSchema field, so that 
+# multiple comments can be displayed in the comments_ratings field.
 @restaurant_bp.route('/')
 def get_all_restaurants():
     stmt = db.select(Restaurant).order_by(Restaurant.restaurant_name.asc())
     restaurant = db.session.scalars(stmt)
     return restaurants_schema.dump(restaurant)
 
-# This route gets individual restaurants
+# This route gets individual restaurants.
+# The restaurant_schema is used to display a specific restaurant. 
+# The Comments_rating_schema is included as a field as well to display all the comments for that restaurant.
 @restaurant_bp.route('/<int:id>')
 def get_one_restaurant(id):
     stmt = db.select(Restaurant).filter_by(id=id)
@@ -41,7 +46,7 @@ def get_one_restaurant(id):
     else:
         return {'error': f'Restaurant not found with id {id}'}, 404
 
-# This route gets the restaurants by restaurant name
+# This is similar to the above route, except it gets restaurants by restaurant name.
 @restaurant_bp.route('/restaurant_name/<string:restaurant_name>')
 def get_restaurant_by_name(restaurant_name):
     stmt = db.select(Restaurant).filter_by(restaurant_name=restaurant_name)
@@ -51,7 +56,7 @@ def get_restaurant_by_name(restaurant_name):
         return {'error': f'Restaurant not found with name {restaurant_name}'}, 404
     return restaurants_schema.dump(restaurants)
 
-# This route gets the restaurants by country
+# This is similar to the above route, except it gets restaurants by country.
 @restaurant_bp.route('/country/<string:country>')
 def get_restaurant_by_country(country):
     if country not in VALID_COUNTRIES:
@@ -63,7 +68,7 @@ def get_restaurant_by_country(country):
         return {'error': f'Restaurant not found in {country}'}, 404
     return restaurants_schema.dump(restaurants)
 
-# This route gets the restaurants by buffet
+# This is similar to the above route, except it gets restaurants by buffet.
 @restaurant_bp.route('/buffet/<string:buffet>')
 def get_restaurant_by_buffet(buffet):
     if buffet not in VALID_BUFFET:
@@ -75,7 +80,7 @@ def get_restaurant_by_buffet(buffet):
         return {'error': f'There are no Restaurants with buffet {buffet}'}, 404
     return restaurants_schema.dump(restaurants)
     
-# This route gets the restaurants by cuisine
+# This is similar to the above route, except it gets restaurants by cuisine.
 @restaurant_bp.route('/cuisine/<string:cuisine>')
 def get_restaurant_by_cuisine(cuisine):
     if cuisine not in VALID_CUISINES:
@@ -87,6 +92,9 @@ def get_restaurant_by_cuisine(cuisine):
         return {'error': f'There are no Restaurants with cuisine {cuisine}'}, 404
     return restaurants_schema.dump(restaurants)
 
+# This route creates a restaurant. Only an admin has authorisation to do this.
+# If the user is not logged in as admin, then the @authorise_as_admin decorator
+# function is called and an error message is returned, saying not authorised.
 @restaurant_bp.route('/', methods=['POST'])
 @jwt_required()
 @authorise_as_admin
@@ -104,7 +112,9 @@ def create_restaurant():
     db.session.commit()
     return restaurant_schema.dump(restaurant), 201
 
-
+# This route deletes a specific restaurant by filtering by id of the restaurant.
+# If the user is not logged in as admin, then the @authorise_as_admin decorator
+# function is called and an error message is returned saying not authorised.
 @restaurant_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin
@@ -118,7 +128,10 @@ def delete_restaurant(id):
     else:
         return {'error': f'Restaurant not found with id {id}'}, 404
 
-
+# This route updates a specific restaurant by filtering by id of the restaurant.
+# Only admin is authorised to update a specific restaurant.
+# This route allows you to update a specific attribute of the restaurant model,
+# without having to enter in all the attributes in the request body.
 @restaurant_bp.route('/<int:id>', methods=['PUT', 'PATCH'])
 @jwt_required()
 @authorise_as_admin

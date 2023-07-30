@@ -32,7 +32,10 @@ def authorise_as_admin(fn):
             return {'error': 'Not authorised to perform delete'}, 403
     return wrapper
 
-
+# This route lets the user add a favourite restaurant to specific favourites list by id.
+# The user must be the one that created the favourites_list to add a restaurant to the favourites list.
+# The returned response shows a JSON object of id, favourites_list field (shows which favourites list the restaurant was put into),
+# and restaurant field (which shows what restaurant was added to the favourite_restaurant table).
 @favourite_restaurant_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_favourite_restaurant(favourites_list_id):
@@ -61,7 +64,8 @@ def create_favourite_restaurant(favourites_list_id):
         if err.orig.pgcode == errorcodes.FOREIGN_KEY_VIOLATION:
             return {'error': f'Restaurant Id {restaurant_id} does not exist'}, 404
         
-
+# This route lets the user who created the favourites list delete a restaurant from the favourite_restaurants table.
+# Also admin has access to this operation as well.
 @favourite_restaurant_bp.route('/<int:favourite_restaurants_id>', methods=['DELETE'])
 @jwt_required()
 @authorise_as_admin
